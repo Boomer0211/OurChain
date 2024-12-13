@@ -7,7 +7,7 @@
 #include "base58.h"
 #include "chain.h"
 #include "consensus/validation.h"
-#include "contract/updateStrategy.h"
+#include "contract/updatepolicy.h"
 #include "core_io.h"
 #include "httpserver.h"
 #include "init.h"
@@ -3340,8 +3340,8 @@ UniValue dumpcontractmessage(const JSONRPCRequest& request)
     ReadLock r_lock(tmp_contract_db_mutex);
     // use zmq send to contract
     std::string buf;
-    auto msg = parseZmqMsg(true, address_str, args, "");
-    zmqPushMessage(msg, &buf);
+    auto msg = MakeZmqMsg(true, address_str, args, "");
+    SendZmq(msg, &buf);
     UniValue uv;
     const bool ok = uv.read(buf);
     r_lock.unlock();

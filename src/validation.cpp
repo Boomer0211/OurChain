@@ -14,7 +14,7 @@
 #include "consensus/merkle.h"
 #include "consensus/tx_verify.h"
 #include "consensus/validation.h"
-#include "contract/processing.h"
+#include "contract/statemanager.h"
 #include "cuckoocache.h"
 #include "fs.h"
 #include "hash.h"
@@ -102,6 +102,7 @@ CScript COINBASE_FLAGS;
 const std::string strMessageMagic = "Bitcoin Signed Message:\n";
 
 // Contract State
+// TODO change variable name, shouldn't same as type
 ContractStateCache* contractStateCache;
 mutex contractStateCacheMtx;
 
@@ -2455,7 +2456,7 @@ bool ActivateBestChain(CValidationState& state, const CChainParams& chainparams,
                 pindexMostWork = FindMostWorkChain();
             }
 
-            // Whether we have anything to do at all.
+            // whether we have anything to do at all
             if (pindexMostWork == nullptr || pindexMostWork == chainActive.Tip())
                 return true;
 
@@ -2499,18 +2500,17 @@ bool ActivateBestChain(CValidationState& state, const CChainParams& chainparams,
     }
 
     {
+        // TODO: Check if here need mutex
         if (contractStateCache == nullptr) {
             contractStateCacheMtx.lock();
-            if (contractStateCache == nullptr) {
+            if (contractStateCache == nullptr)
                 contractStateCache = new ContractStateCache();
-            }
             contractStateCacheMtx.unlock();
         }
-        ContractObserver observer(contractStateCache);
-        if (!observer.onChainStateSet(chainActive, chainparams.GetConsensus())) {
+        ContractStateManager curManager(contractStateCache);
+        if (!curManager.SyncState(chainActive, chainparams.GetConsensus()))
             return false;
-        }
-        // should be called after onChainStateSet
+        // should be called after SyncState
         LogPrintf("ActivateBestChain\n");
     }
 

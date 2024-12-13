@@ -1,4 +1,4 @@
-#include "contract/contractServer.h"
+#include "contract/contractserver.h"
 #include "util.h"
 #include "validation.h"
 #include <atomic>
@@ -134,7 +134,7 @@ ContractServer::~ContractServer()
     LogPrintf("contract server destroyed\n");
 }
 
-static void responseZmqMessage(zmq::socket_t& socket, const string& response)
+static void responseZmqMsg(zmq::socket_t& socket, const string& response)
 {
     zmq::message_t message(response.size());
     memcpy(message.data(), response.c_str(), response.size());
@@ -253,12 +253,12 @@ void ContractServer::workerThread()
             };
             // execute contract
             if (!callFunc(&arg)) {
-                responseZmqMessage(puller, "FAILED");
+                responseZmqMsg(puller, "FAILED");
                 delete stateStack;
                 continue;
             }
             // send state
-            responseZmqMessage(puller, state_buf);
+            responseZmqMsg(puller, state_buf);
             delete stateStack;
         } else {
             if (stopFlag.load()) {
@@ -306,6 +306,7 @@ bool ContractServer::stop()
 
 bool ContractServer::interrupt()
 {
+
     // stop the worker threads
     stopFlag.store(true);
     return true;

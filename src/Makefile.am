@@ -106,13 +106,12 @@ BITCOIN_CORE_H = \
   compressor.h \
   consensus/consensus.h \
   consensus/tx_verify.h \
-  contract/processing.h \
   contract/cache.h \
   contract/dbWrapper.h \
-  contract/observer.h \
-  contract/updateStrategy.h \
+  contract/statemanager.h \
+  contract/updatepolicy.h \
   contract/ourcontract.h \
-  contract/contractServer.h \
+  contract/contractserver.h \
   core_io.h \
   core_memusage.h \
   cuckoocache.h \
@@ -210,10 +209,10 @@ libbitcoin_server_a_SOURCES = \
   contract/processing.cpp \
   contract/cache.cpp \
   contract/dbWrapper.cpp \
-  contract/observer.cpp \
-  contract/updateStrategy.cpp \
+  contract/statemanager.cpp \
+  contract/updatepolicy.cpp \
   contract/libourcontract.cpp \
-  contract/contractServer.cpp \
+  contract/contractserver.cpp \
   httprpc.cpp \
   httpserver.cpp \
   init.cpp \
@@ -269,11 +268,11 @@ libbitcoin_wallet_a_SOURCES = \
   wallet/wallet.cpp \
   wallet/walletdb.cpp \
   contract/processing.cpp \
-  contract/updateStrategy.cpp \
-  contract/observer.cpp \
+  contract/updatepolicy.cpp \
+  contract/statemanager.cpp \
   contract/dbWrapper.cpp \
   contract/cache.cpp \
-  contract/contractServer.cpp \
+  contract/contractserver.cpp \
   $(BITCOIN_CORE_H)
 
 # crypto primitives library

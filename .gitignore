@@ -1,6 +1,10 @@
 *.tar.gz
 src/ourcontract-rt
 .vscode/*.vc.*
+.bitcoin/bitcoin.conf
+.vscode/settings.json
+mytest.sh
+sample.cpp
 
 .idea/
 

@@ -78,48 +78,49 @@ void BlockCache::removeBlockIndex(int blockHeight)
     dbWrapper->deleteState(intToKey(blockHeight));
     assert(dbWrapper->isOk());
 }
+
 ContractStateCache::ContractStateCache()
 {
-    blockCache = new BlockCache();
-    snapShot = new SnapShot(std::string("current_cache"));
+    blockcache = new BlockCache();
+    snapshot = new SnapShot(std::string("current_cache"));
 }
 ContractStateCache::~ContractStateCache()
 {
-    delete blockCache;
-    delete snapShot;
+    delete blockcache;
+    delete snapshot;
 }
 SnapShot* ContractStateCache::getSnapShot()
 {
-    return snapShot;
+    return snapshot;
 }
 void ContractStateCache::clearSnapShot()
 {
-    snapShot->clear();
+    snapshot->clear();
 }
 bool ContractStateCache::getFirstBlockCache(BlockCache::blockIndex& blockIndex)
 {
-    blockIndex = blockCache->getHeighestBlock();
+    blockIndex = blockcache->getHeighestBlock();
     if (blockIndex.blockHeight == -1)
         return false;
     return true;
 }
 BlockCache* ContractStateCache::getBlockCache()
 {
-    return blockCache;
+    return blockcache;
 }
 void ContractStateCache::pushBlock(BlockCache::blockIndex blockIndex)
 {
-    blockCache->setBlockIndex(blockIndex.blockHash, blockIndex.blockHeight);
+    blockcache->setBlockIndex(blockIndex.blockHash, blockIndex.blockHeight);
 }
 void ContractStateCache::popBlock()
 {
-    BlockCache::blockIndex blockIndex = blockCache->getHeighestBlock();
-    blockCache->removeBlockIndex(blockIndex.blockHeight);
+    BlockCache::blockIndex blockIndex = blockcache->getHeighestBlock();
+    blockcache->removeBlockIndex(blockIndex.blockHeight);
 }
 void ContractStateCache::saveCheckPoint()
 {
-    auto blockIndex = blockCache->getHeighestBlock();
-    snapShot->saveCheckPoint(blockIndex.blockHash.ToString());
+    auto blockIndex = blockcache->getHeighestBlock();
+    snapshot->saveCheckPoint(blockIndex.blockHash.ToString());
 }
 bool ContractStateCache::restoreCheckPoint(std::string tipBlockHash, std::vector<CheckPointInfo> checkPointList)
 {
@@ -132,19 +133,19 @@ bool ContractStateCache::restoreCheckPoint(std::string tipBlockHash, std::vector
         }
     }
     assert(targetBackupId > 0);
-    return this->snapShot->getDBWrapper()->restoreCheckPoint(targetBackupId);
+    return this->snapshot->getDBWrapper()->restoreCheckPoint(targetBackupId);
 }
 void ContractStateCache::clearCheckPoint(int maxBlockCheckPointCount)
 {
-    this->snapShot->getDBWrapper()->removeOldCheckPoint(maxBlockCheckPointCount);
+    this->snapshot->getDBWrapper()->removeOldCheckPoint(maxBlockCheckPointCount);
 }
 
 fs::path ContractStateCache::getContractPath(std::string name)
 {
-    return snapShot->getDBWrapper()->getContractDBPath(name);
+    return snapshot->getDBWrapper()->getContractDBPath(name);
 }
 
 std::vector<CheckPointInfo> ContractStateCache::getCheckPointList()
 {
-    return snapShot->getDBWrapper()->findCheckPointList();
+    return snapshot->getDBWrapper()->findCheckPointList();
 }

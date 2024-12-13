@@ -20,11 +20,13 @@ RUN apt-get install -y libgflags-dev libsnappy-dev zlib1g-dev libbz2-dev liblz4-
 RUN cd ~ && git clone https://github.com/facebook/rocksdb.git && cd rocksdb && make shared_lib && make install-shared
 RUN cd ~ && rm -rf rocksdb
 
-# git clone ourchain
-ARG REPO_URL=https://github.com/leon123858/OurChain.git
-ARG REPO_NAME=OurChain
-ARG REPO_BRANCH=main
-RUN cd ~ && mkdir Desktop && cd Desktop && git clone $REPO_URL && mv $REPO_NAME ourchain && cd ourchain && git checkout $REPO_BRANCH && git pull
+# Create destination directory
+RUN mkdir -p /root/Desktop/ourchain
+
+# Copy the project files into the container
+COPY ./ /root/Desktop/ourchain
+
+# Set working directory
 WORKDIR /root/Desktop/ourchain
 
 # install bitcoin optional dependencies

@@ -54,7 +54,7 @@
 #include "OurChain/gpowserver.h"
 #endif
 
-#include "contract/contractServer.h"
+#include "contract/contractserver.h"
 
 #ifndef WIN32
 #include <signal.h>

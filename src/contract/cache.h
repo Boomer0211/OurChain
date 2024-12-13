@@ -100,8 +100,8 @@ public:
     fs::path getContractPath(std::string name);
 
 private:
-    BlockCache* blockCache;
-    SnapShot* snapShot;
+    BlockCache* blockcache;
+    SnapShot* snapshot;
 };
 
 #endif // CONTRACT_CACHE_H
